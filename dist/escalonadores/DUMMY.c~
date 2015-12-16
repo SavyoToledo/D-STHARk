@@ -1,0 +1,29 @@
+#include "../include/escalonador.h"
+int i = 0,terminate = 0;
+PtaskList l;
+pthread_mutex_t emtx; 
+
+void *escalonate(void *arg){
+    pthread_mutex_init(&emtx, NULL);
+    pthread_mutex_lock(&emtx);
+    l = createList();
+    pthread_mutex_unlock(&emtx);
+    escReady = 1;
+    return NULL;
+}
+
+void submitTask(Ttask t){
+    if(t.taskType != TERMINATOR_ID){
+        pthread_mutex_lock(&emtx);
+        pushToList(l,t, 0);
+        pthread_mutex_unlock(&emtx);
+   }else terminate = 1;
+}
+
+Ttask popTask(Tworker w){
+    pthread_mutex_lock(&emtx);
+    Ttask ret = pullfromList(l,0);
+    pthread_mutex_unlock(&emtx);
+    if(terminate && ret.taskType == EMPTY_ID) ret = createTask(0, TERMINATOR_ID, 0, NULL);
+    return ret;
+}
