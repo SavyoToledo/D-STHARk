@@ -93,23 +93,23 @@ void PushTask(Ttask t){
 			}
 		}
 	
-	if(workerCount[2] != 0){
-		for(l = 1; l <= workerCount[2]; l++){
-			pthread_mutex_lock(&micList_mutex[l]);	
-			PtaskListItem it = micList[l]->head;
-			for(i = 0; i < micList[l]->size && it != NULL;i++){
-				micTime_tmp += it->item.micTime;
-				it = it->next;
-			}
-			pthread_mutex_unlock(&micList_mutex[l]);
-			if(micTime_tmp < micTime){
-				micTime = micTime_tmp;
-				minMICworker = l;
-			}
-			micTime_tmp = t.micTime;
-			
-		}	
-	}
+		if(workerCount[2] != 0){			
+			for(l = 1; l <= workerCount[2]; l++){
+				pthread_mutex_lock(&micList_mutex[l]);	
+				PtaskListItem it = micList[l]->head;
+				for(i = 0; i < micList[l]->size && it != NULL;i++){
+					micTime_tmp += it->item.micTime;
+					it = it->next;
+				}
+				pthread_mutex_unlock(&micList_mutex[l]);
+				if(micTime_tmp < micTime){
+					micTime = micTime_tmp;
+					minMICworker = l;
+				}
+				micTime_tmp = t.micTime;
+				
+			}	
+		}
 	//printf("Task %d cpu %f gpu %f mic %f\n", t.taskID, cpuTime, gpuTime, micTime);
 	if(gpuTime < micTime && gpuTime < cpuTime && workerCount[1] != 0){
 		pthread_mutex_lock(&gpuList_mutex[minGPUworker]);

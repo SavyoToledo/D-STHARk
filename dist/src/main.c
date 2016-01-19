@@ -10,10 +10,12 @@
 #include "../include/balanceador.h"
 
 
+
 int ConfigureSimulator(){
-	
+	int i , j ;
 	f = fopen("conf_tasks/conf.txt","r");
-	parseConf(f);
+	
+    parseConf(f);
 
 	pthread_mutex_init(&idDoneMtx, NULL);
 	countDone = 0;
@@ -48,13 +50,19 @@ void printTask(Ttask t){
     printf("%d - size: %u MB\n",t.taskType,t.taskSize);
 }
 
+typedef struct timeval Time;
+
 int main(){
 	
-	int i,j;
-    time_t segundos = time(NULL);
-    
 
+    Time start,end;
+	int i,j;
+    double total_execution_time;
     srand(time(NULL));
+
+    gettimeofday(&start,0);
+
+
 //======================================================================
 //================= Configuração do SImulador ==========================
 //======================================================================
@@ -149,10 +157,10 @@ int main(){
         fprintf(printEstastisticasBarras, "\n");
     }
     
-    
-    int tempo_decorrido = time(NULL) - segundos;
-    printf("Tempo gasto em milissegundos %d\n",tempo_decorrido);
-    fprintf(total_time,"%d",tempo_decorrido);
+    gettimeofday(&end,0);
+    total_execution_time = (end.tv_sec + end.tv_usec/1000000.0) - (start.tv_sec + start.tv_usec/1000000.0);
+    printf("Tempo gasto em segundos %lf\n",total_execution_time);
+    fprintf(total_time,"%lf",total_execution_time);
 
     printf("CONTADOR == %d\n", contador);
     

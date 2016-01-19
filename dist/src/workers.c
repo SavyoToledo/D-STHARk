@@ -38,29 +38,30 @@ int executeTask(Ttask task, Pworker worker){
 		worker->flag = 1;
 		
 		if(worker->workerType == 0){
-			fprintf(printTemposThreads, "thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.cpuTime);
+			fprintf(printTemposThreads, "CPU -thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.cpuTime);
 			//printf("thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.cpuTime);
 			worker->totalTime += task.cpuTime;
 			//usleep(task.cpuTime);
-			nsleep(task.cpuTime);
-			//sleep(task.cpuTime/1000000);
+			//nsleep(task.cpuTime);
+			sleep(task.cpuTime/1000000);
 			
 		}
 		if(worker->workerType == 1){
-			fprintf(printTemposThreads, "thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.gpuTime);
+			fprintf(printTemposThreads, "GPU -thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.gpuTime);
 			//printf("thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.gpuTime);
 			worker->totalTime += task.gpuTime;
 			//usleep(task.gpuTime);
-			nsleep(task.gpuTime);
-			//sleep(task.gpuTime/1000000);
+			//nsleep(task.gpuTime);
+			sleep(task.gpuTime/1000000);
 		}
 		if(worker->workerType == 2){
-			fprintf(printTemposThreads, "thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.micTime);
+			fprintf(printTemposThreads, "MIC -thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.micTime);
 			//printf("thread type:%u (%d) running task type:%i (%d) in %lf miliseconds\n",worker->workerType, task.taskID, worker->id, task.taskType, task.micTime);
 			worker->totalTime += task.micTime;
 			//usleep(task.micTime);
-			nsleep(task.micTime);
-			//sleep(task.micTime/1000000);
+			//nsleep(task.micTime);
+			//printf("MIC TIME: %lf\n",task.micTime );
+			sleep(task.micTime/1000000);
 		}
 		
 		vetorEst[worker->workerType]++;

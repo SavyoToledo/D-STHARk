@@ -8,7 +8,6 @@ void InitializeScheduler(){
     pthread_mutex_lock(&emtx);
     l = createList();
     pthread_mutex_unlock(&emtx);
-    escReady = 1;
 
 }
 

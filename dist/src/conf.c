@@ -3,6 +3,8 @@ pthread_mutex_t emtx;
 
 double fRand(double fMin, double fMax)
 {
+    fMin /= 100;
+    fMax /= 100;
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
@@ -23,7 +25,7 @@ void parseConf(FILE *f){
     
     for(i=0;i<taskTypeCount;i++) taskTimes[i] = calloc(workerTypeCount,sizeof(double));
     for(i=0;i<workerTypeCount;i++) fscanf(f,"%lf ",&transferSpeed[i]);
-    for(i=0;i<taskTypeCount;i++) for(j=0;j<workerTypeCount;j++) fscanf(f,"%lf ",&taskTimes[i][j]);
+    for(i=0;i<taskTypeCount;i++) for(j=0;j<workerTypeCount; j++) fscanf(f,"%lf ",&taskTimes[i][j]);
 
     workerCount = calloc(workerTypeCount,sizeof(unsigned int));
     for(i = 0; i < workerTypeCount; i++){
@@ -50,33 +52,47 @@ void parseConf(FILE *f){
 
 
 Ttask getTask(){
-	
+
     int type,tid,count = 0,i;
+
 
     double errorPercentage;
     unsigned int size,tmp[50],*dep,numDependencies;
     double cpuTime,gpuTime,micTime;
+    int worker_position = 0;
         
     // Load Task
     if(fscanf(tasksFile,"%d %d %u",&tid,&type,&size) == EOF){
 		return createTask(0,EMPTY_ID,0,0,NULL,0,0,0);
 	}
     else{
-		cpuTime = taskTimes[type][0];
-		gpuTime = taskTimes[type][1];
-		micTime = taskTimes[type][2];
-		stg =transferSpeed[1];
-		stm =transferSpeed[2];
+        
+        if(vetorUnidades[0] != 0){
+            cpuTime = taskTimes[type][0];
+            worker_position++;
+        }
+             
+        if(vetorUnidades[1] != 0){  
+            gpuTime = taskTimes[type][worker_position];
+            stg =transferSpeed[worker_position];        
+            worker_position++;
+        }
+        
+        if (vetorUnidades[2] != 0){
+            micTime = taskTimes[type][worker_position];
+		    stm =transferSpeed[worker_position];
+        }
     }
      
     //Calculating Error
     errorPercentage = fRand(minErrorPercentage,maxErrorPercentage);
-    if(errorPercentage != 0){
-		cpuTime = fRand( (cpuTime - cpuTime*errorPercentage), (cpuTime + cpuTime*errorPercentage));
-		gpuTime = fRand( (gpuTime - gpuTime*errorPercentage), (gpuTime + gpuTime*errorPercentage));
-		micTime = fRand( (micTime - cpuTime*errorPercentage), (micTime + cpuTime*errorPercentage));
-	}
     
+    if(errorPercentage != 0){
+		cpuTime = fRand( (cpuTime - (cpuTime*errorPercentage)), (cpuTime + (cpuTime*errorPercentage)));
+		gpuTime = fRand( (gpuTime - (gpuTime*errorPercentage)), (gpuTime + (gpuTime*errorPercentage)));
+		micTime = fRand( (micTime - (micTime*errorPercentage)), (micTime + (micTime*errorPercentage)));
+	}
+
     //Load Dependencies
 	do{
 		fscanf(tasksFile,"%u",&tmp[count]);          

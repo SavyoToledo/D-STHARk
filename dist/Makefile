@@ -15,4 +15,4 @@ obj/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -r $(objects) simulador EstatisticasPizza.txt EstatisticasBarras.txt TemposThreads.txt TotalTime.txt -f
+	rm -r $(objects) simulador EstatisticasBarras.txt EstatisticasPizza.txt TemposThreads.txt -f
